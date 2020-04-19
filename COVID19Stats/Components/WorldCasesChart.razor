@@ -1,0 +1,35 @@
+﻿<Card>
+    <CardHeader Title="World cases by status">
+        <ActionContent>
+            <IconButton aria-label="stats">
+                <RefreshIcon />
+            </IconButton>
+        </ActionContent>
+    </CardHeader>
+    <CardContent>
+        <div class="dashboard-chart-container">
+            <ChartJsPieChart Config="@Props.ChartConfig" />
+        </div>
+        <div class="dashboard-chart-legend">
+            @foreach (var state in Props.States)
+            {
+                <div class="dashboard-chart-legent-item"
+                     @key="@state.title">
+                    <Typography Variant="@TypographyVariant.Body1">
+                        @state.title
+                    </Typography>
+                    <Typography Style="@("color: " + state.color)"
+                                Variant="@TypographyVariant.H5">
+                        @state.percent.ToString("P2")
+                    </Typography>
+                </div>
+            }
+        </div>
+    </CardContent>
+</Card>
+
+@code
+{
+    [Parameter]
+    public WorldCasesChartProps Props { get; set; }
+}

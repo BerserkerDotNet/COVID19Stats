@@ -1,0 +1,114 @@
+﻿@inject CovidTrackingClient CTClient
+@using ChartJs.Blazor.ChartJS.BarChart
+@using ChartJs.Blazor.ChartJS.BarChart.Axes
+
+    <div class="form-group">
+        <label>Active cases threshold: </label>
+        <select class="form-control" @bind="ActiveThreshold">
+                <option value="60000">60000</option>
+                <option value="40000">40000</option>
+                <option value="30000">30000</option>
+                <option value="20000">20000</option>
+                <option value="10000">10000</option>
+                <option value="5000">5000</option>
+                <option value="1000">1000</option>
+                <option value="500">500</option>
+                <option value="250">250</option>
+                <option value="100">100</option>
+                <option value="0">0</option>
+        </select>
+    </div>
+
+<ChartJsBarChart Config="@_barChartConfig"
+                 Width="1200"
+                 Height="600" />
+
+@code{
+
+    private int activeThreshold = 1000;
+    public int ActiveThreshold
+    {
+        get { return activeThreshold; }
+        set
+        {
+            activeThreshold = value;
+            UpdateChart();
+        }
+    }
+
+    private BarConfig _barChartConfig = new BarConfig
+    {
+        Options = new BarOptions
+        {
+            Title = new OptionsTitle
+            {
+                Display = true,
+                Text = "World cases of COVID 19"
+            },
+            Responsive = true,
+            Scales = new BarScales
+            {
+                XAxes = new List<CartesianAxis>
+            {
+                        new BarCategoryAxis
+                        {
+                            BarThickness = BarThickness.Flex,
+                            Stacked = false,
+                        }
+                }
+            }
+        }
+    };
+
+    private IEnumerable<CovidWorldCurrent> CTCurrent = Enumerable.Empty<CovidWorldCurrent>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        CTCurrent = await CTClient.GetWorld();
+        CTCurrent = CTCurrent.OrderByDescending(c => c.Confirmed).ToArray();
+        UpdateChart();
+    }
+
+    private void UpdateChart()
+    {
+        _barChartConfig.Data.Datasets.Clear();
+        _barChartConfig.Data.Labels.Clear();
+
+
+        var data = CTCurrent.Where(c => (c.Confirmed - c.Deaths - c.Recovered) > ActiveThreshold).ToArray();
+        _barChartConfig.Data.Labels.AddRange(data.Select(c => c.Location));
+
+        var activeDataSet = new BarDataset<Int32Wrapper>
+        {
+            Label = "Active",
+            BackgroundColor = ColorUtil.FromDrawingColor(System.Drawing.Color.LightBlue),
+            BorderColor = ColorUtil.ColorString(0, 0, 0),
+            BorderWidth = 1
+        };
+
+        activeDataSet.AddRange(data.Select(c => c.Confirmed - c.Deaths - c.Recovered).Wrap());
+        _barChartConfig.Data.Datasets.Add(activeDataSet);
+
+        var recoveredDataSet = new BarDataset<Int32Wrapper>
+        {
+            Label = "Recovered",
+            BackgroundColor = ColorUtil.FromDrawingColor(System.Drawing.Color.LightGreen),
+            BorderColor = ColorUtil.ColorString(0, 0, 0),
+            BorderWidth = 1
+        };
+
+        recoveredDataSet.AddRange(data.Select(c => c.Recovered).Wrap());
+        _barChartConfig.Data.Datasets.Add(recoveredDataSet);
+
+        var deathDataSet = new BarDataset<Int32Wrapper>
+        {
+            Label = "Deaths",
+            BackgroundColor = ColorUtil.FromDrawingColor(System.Drawing.Color.Red),
+            BorderColor = ColorUtil.ColorString(0, 0, 0),
+            BorderWidth = 1
+        };
+
+        deathDataSet.AddRange(data.Select(c => c.Deaths).Wrap());
+        _barChartConfig.Data.Datasets.Add(deathDataSet);
+    }
+}

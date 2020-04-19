@@ -1,0 +1,78 @@
+﻿@inject CovidTrackingClient CTClient
+@using ChartJs.Blazor.ChartJS.BarChart
+@using ChartJs.Blazor.ChartJS.BarChart.Axes
+
+<ChartJsBarChart Config="@_barChartConfig"
+                 Width="600"
+                 Height="300" />
+
+@code{
+
+    private BarConfig _barChartConfig = new BarConfig
+    {
+        Options = new BarOptions
+        {
+            Title = new OptionsTitle
+            {
+                Display = true,
+                Text = "COVID 19 by State"
+            },
+            Responsive = true,
+            Scales = new BarScales
+            {
+                XAxes = new List<CartesianAxis>
+        {
+                        new BarCategoryAxis
+                        {
+                            BarThickness = BarThickness.Flex,
+                            Stacked = false
+                        }
+                }
+            }
+        }
+    };
+
+    private IEnumerable<CovidTrackingCurrent> CTCurrent = Enumerable.Empty<CovidTrackingCurrent>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        CTCurrent = await CTClient.GetStates();
+        CTCurrent = CTCurrent.OrderByDescending(c => c.Positive).ToArray();
+
+        _barChartConfig.Data.Labels.AddRange(CTCurrent.Select(c => c.StateName));
+
+        var positiveDataSet = new BarDataset<FloatWrapper>
+        {
+            Label = "Positive",
+            BackgroundColor = ColorUtil.FromDrawingColor(System.Drawing.Color.LightBlue),
+            BorderColor = ColorUtil.ColorString(0, 0, 0),
+            BorderWidth = 1
+        };
+
+        positiveDataSet.AddRange(CTCurrent.Select(c => c.Positive ?? 0f).Wrap());
+        _barChartConfig.Data.Datasets.Add(positiveDataSet);
+
+        var negativeDataSet = new BarDataset<FloatWrapper>
+        {
+            Label = "Negative",
+            BackgroundColor = ColorUtil.FromDrawingColor(System.Drawing.Color.LightGreen),
+            BorderColor = ColorUtil.ColorString(0, 0, 0),
+            BorderWidth = 1
+        };
+
+        negativeDataSet.AddRange(CTCurrent.Select(c => c.Negative ?? 0f).Wrap());
+        _barChartConfig.Data.Datasets.Add(negativeDataSet);
+
+        var deathDataSet = new BarDataset<FloatWrapper>
+        {
+            Label = "Death",
+            BackgroundColor = ColorUtil.FromDrawingColor(System.Drawing.Color.Red),
+            BorderColor = ColorUtil.ColorString(0, 0, 0),
+            BorderWidth = 1
+        };
+
+        deathDataSet.AddRange(CTCurrent.Select(c => c.Death ?? 0f).Wrap());
+        _barChartConfig.Data.Datasets.Add(deathDataSet);
+
+    }
+}

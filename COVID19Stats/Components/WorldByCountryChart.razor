@@ -1,0 +1,20 @@
+﻿<Card>
+    <CardHeader Title="World cases by country">
+        <ActionContent>
+            <IconButton aria-label="stats">
+                <RefreshIcon />
+            </IconButton>
+        </ActionContent>
+    </CardHeader>
+    <CardContent>
+        <div class="dashboard-bycountry-chart-container">
+            <ChartJsBarChart Config="Props.ChartConfig" />
+        </div>
+    </CardContent>
+</Card>
+
+@code {
+
+    [Parameter]
+    public WorldByCountryChartProps Props { get; set; }
+}

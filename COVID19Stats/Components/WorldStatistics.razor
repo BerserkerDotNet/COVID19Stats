@@ -1,0 +1,32 @@
+﻿<Card>
+    <CardHeader Title="World cases" Subheader="@Props.Updated.ToString("MMMM dd, yyyy")">
+        <ActionContent>
+            <IconButton aria-label="stats">
+                <RefreshIcon />
+            </IconButton>
+        </ActionContent>
+    </CardHeader>
+    <CardContent>
+        <Typography Variant="TypographyVariant.Body1">
+            Total cases: @Props.Cases.ToString("N0")
+        </Typography>
+        <Typography Variant="TypographyVariant.Body1">
+            Deaths: @Props.Deaths.ToString("N0")
+        </Typography>
+        <Typography Variant="TypographyVariant.Body1">
+            Recovered: @Props.Recovered.ToString("N0")
+        </Typography>
+        <Typography Variant="TypographyVariant.Body1">
+            Active: @Props.Active.ToString("N0")
+        </Typography>
+        <Typography Variant="TypographyVariant.Body1">
+            Critical: @Props.Critical.ToString("N0")
+        </Typography>
+    </CardContent>
+</Card>
+
+@code
+{
+    [Parameter]
+    public WorldStatisticsProps Props { get; set; }
+}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<linker>
+  <assembly fullname="mscorlib">
+    <type fullname="System.Threading.WasmRuntime" />
+  </assembly>
+  <assembly fullname="System.Core">
+    <type fullname="System.Linq.Expressions*" />
+  </assembly>
+
+  <assembly fullname="COVID19Stats" />
+
+  <assembly fullname="System">
+    <type fullname="System.ComponentModel.ReferenceConverter">
+      <method signature="System.Void .ctor(System.Type)" />
+    </type>
+  </assembly>
+</linker>

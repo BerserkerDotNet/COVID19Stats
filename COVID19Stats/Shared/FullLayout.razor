@@ -1,0 +1,33 @@
+﻿@inherits LayoutComponentBase
+
+<MainLayout>
+    <TitleContent>
+        <Typography Style="flex-grow: 1; margin-left: 20px;"
+                    Variant="@TypographyVariant.H6"
+                    NoWrap>
+            COVID-19 Stats
+        </Typography>
+    </TitleContent>
+    <BodyContent>
+        @Body
+    </BodyContent>
+    <SidebarContent>
+        <Navigation Class="FullLayout-Navigation"
+                    Items="@Items">
+        </Navigation>
+    </SidebarContent>
+</MainLayout>
+
+@code
+{
+    private List<NavigationItem> Items = new List<NavigationItem>
+{
+        new NavigationItem
+        {
+            Title = "World",
+            Path = "",
+            Icon = @<DashboardIcon />,
+            Prefix = false
+        }
+    };
+}

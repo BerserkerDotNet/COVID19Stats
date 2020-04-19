@@ -1,0 +1,96 @@
+﻿@inject CovidTrackingClient CTClient
+@using ChartJs.Blazor.ChartJS.BarChart
+
+<ChartJsBarChart
+                 Config="@_barChartConfig"
+                 Width="600"
+                 Height="300" />
+
+<div>
+    <label>Data: </label>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>State</th>
+                <th>Positive</th>
+                <th>Negative</th>
+                <th>Pending</th>
+                <th>Hospitalized</th>
+                <th>Died</th>
+                <th>Total</th>
+                <th>Modified</th>
+                <th>Checked</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var state in CTCurrent)
+            {
+                <tr>
+                    <td>@state.StateName</td>
+                    <td>@state.Positive</td>
+                    <td>@state.Negative</td>
+                    <td>@state.Pending</td>
+                    <td>@state.Hospitalized</td>
+                    <td>@state.Death</td>
+                    <td>@state.Total</td>
+                    <td>@state.DateModified</td>
+                    <td>@state.DateChecked</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code{
+
+    private BarConfig _barChartConfig = new BarConfig(ChartType.HorizontalBar)
+    {
+        Options = new BarOptions
+        {
+            Title = new OptionsTitle
+            {
+                Display = true,
+                Text = "COVID 19 by State"
+            },
+            Responsive = true,
+            Scales = new BarScales
+            {
+                XAxes = new List<CartesianAxis>
+                {
+                        new LinearCartesianAxis
+                        {
+                            Ticks = new LinearCartesianTicks
+                            {
+                                AutoSkip = false,
+                                Min = 0
+                            }
+                        }
+                    }
+            }
+        }
+    };
+
+    private BarDataset<FloatWrapper> _barDataSet;
+    private IEnumerable<CovidTrackingCurrent> CTCurrent = Enumerable.Empty<CovidTrackingCurrent>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        CTCurrent = await CTClient.GetStates();
+        CTCurrent = CTCurrent.OrderByDescending(c => c.Positive).ToArray();
+
+        _barChartConfig.Data.Labels.AddRange(CTCurrent.Select(c => c.StateName));
+
+        _barDataSet = new BarDataset<FloatWrapper>(ChartType.HorizontalBar)
+        {
+            Label = "COVID 19 by State",
+            BackgroundColor = CTCurrent.Select(c => ColorUtil.FromDrawingColor(c.State.ToColor())).ToArray(),
+            BorderColor = ColorUtil.ColorString(0,0,0),
+            BorderWidth = 1
+        };
+
+        var data = CTCurrent.Select(c => c.Positive ?? 0f).ToArray();
+        _barDataSet.AddRange(data.Wrap());
+
+        _barChartConfig.Data.Datasets.Add(_barDataSet);
+    }
+}

@@ -1,0 +1,14 @@
+﻿@page "/"
+    <div class="dashboard-root">
+        <Grid Container Spacing="Spacing.Four">
+            <Grid Item Large="GridSize.Three">
+                @WorldStatisticsConnected.Get()
+            </Grid>
+            <Grid Item Large="GridSize.Nine">
+                @WorldCasesChartConnected.Get()
+            </Grid>
+            <Grid Item Large="GridSize.Twelve">
+                @WorldByCountryChartConnected.Get()
+            </Grid>
+        </Grid>
+    </div>

@@ -1,0 +1,64 @@
+@inherits Skclusive.Core.Component.StyleComponentBase
+
+<style data-name="Site">
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    html {
+        height: 100%;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+        background-color: var(--theme-custom-content-background-color, #f4f6f8) !important;
+        height: 100%;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    #root {
+        height: 100%;
+    }
+
+    .dashboard-root {
+        padding: 32px;
+    }
+
+    .dashboard-chart-container {
+        height: 300px;
+        position: relative;
+    }
+
+    .dashboard-chart-container .row {
+         height: 300px;
+         position: relative;
+    }
+
+    .dashboard-bycountry-chart-container {
+        height: 500px;
+        position: relative;
+    }
+
+        .dashboard-bycountry-chart-container .row {
+            height: 500px;
+            position: relative;
+        }
+
+    .dashboard-chart-legend {
+        display: flex;
+        margin-top: 16px;
+        justify-content: center;
+    }
+
+    .dashboard-chart-legent-item {
+        padding: 8px;
+        text-align: center;
+    }
+</style>
